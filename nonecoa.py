@@ -21,12 +21,6 @@ def consume(iterator, n):
         # advance to the empty slice starting at position n
         next(itertools.islice(iterator, n, n), None)
 
-def groupwise(iterable, n):
-    bits = itertools.tee(iterable, n)
-    for i, bit in enumerate(bits):
-        consume(bit, i)
-    return zip(*bits)
-
 def groupwise_longest(iterable, n):
     bits = itertools.tee(iterable, n)
     for i, bit in enumerate(bits):
@@ -34,6 +28,16 @@ def groupwise_longest(iterable, n):
     return itertools.zip_longest(*bits)
 
 def retokenize(tokens):
+    """Coalesce None.
+
+       Replace:
+       
+         name?.attr
+          
+       with:
+        
+         name.attr if name is not None else None
+    """
     # See http://bugs.python.org/issue16224#msg211469
     # "Switching from 5-tuples to 2-tuples... is not currently a
     # supported use case". In particular, if you do so in the middle
